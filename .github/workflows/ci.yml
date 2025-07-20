@@ -11,7 +11,13 @@ jobs:
       - name: Create artifact
         run: |
           mkdir -p out
-          zip -r out/biorand-classic-data.zip data
+          if TAG=$(git describe --exact-match --tags 2>/dev/null); then
+            VERSION=$(echo "$TAG" | sed 's/^v//')
+          else
+            VERSION=$(git describe --tags --always | sed 's/^v//')
+          fi
+          echo "$VERSION" > VERSION
+          zip -r out/biorand-classic-data.zip data LICENSE VERSION
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
