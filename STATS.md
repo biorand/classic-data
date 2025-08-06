@@ -22,8 +22,8 @@
 | carlos | re3r |  | 564 | 4 |  | ✅ | ✅ |  |
 | cassandra | re8 |  | 153 | 4 | ✅ | ✅ | ✅ |  |
 | chris | cv |  | 136 | 4 | ✅ | ✅ | ✅ | ✅ |
-| chris | re1 |  | 171 | 4 | ✅ |  |  |  |
 | chris | re1 | battle | 171 | 4 |  | ✅ | ✅ |  |
+| chris | re1 |  | 171 | 4 | ✅ |  |  |  |
 | chris | re5 |  | 1106 | 4 | ✅ | ✅ | ✅ |  |
 | cindy | outbreak |  | 631 | 4 |  | ✅ | ✅ |  |
 | claire | cv |  | 260 | 4 |  | ✅ |  | ✅ |
@@ -52,7 +52,7 @@
 | jill | re3r |  | 647 | 4 | ✅ | ✅ | ✅ |  |
 | jill | rev1 |  | 574 | 4 | ✅ | ✅ | ✅ |  |
 | jim | outbreak |  | 424 | 4 | ✅ | ✅ | ✅ |  |
-| josh | re5 |  | 35 | 0 | ✅ | ✅ | ✅ |  |
+| josh | re5 |  | 281 | 4 | ✅ | ✅ | ✅ |  |
 | kendo | re2 |  | 18 | 4 | ✅ | ✅ | ✅ |  |
 | kendo | re2r |  | 35 | 4 |  | ✅ | ✅ |  |
 | kevin | outbreak |  | 268 | 4 |  | ✅ | ✅ |  |
@@ -104,19 +104,19 @@
 |---|---|---|---|---|---|---|---|---|
 | doug | re5 |  | 14 | 0 |  |  |  |  |
 | mike | re4 |  | 7 | 0 |  |  |  |  |
+| specopsradio |  |  | 99 | 0 |  |  |  |  |
+| bsaahqradio |  |  | 4 | 0 |  |  |  |  |
+| re6bsaaradio |  |  | 59 | 0 |  |  |  |  |
 | ucnighthawkradio |  |  | 5 | 0 |  |  |  |  |
 | nikolaiorcradio |  |  | 7 | 0 |  |  |  |  |
-| ucmiscradio |  |  | 30 | 0 |  |  |  |  |
 | nighthawk |  |  | 11 | 0 |  |  |  |  |
-| narrator |  |  | 151 | 0 |  |  |  |  |
-| gunshot |  |  | 2 | 0 |  |  |  |  |
 | ucbradradio |  |  | 7 | 0 |  |  |  |  |
-| re6bsaaradio |  |  | 59 | 0 |  |  |  |  |
-| bsaahqradio |  |  | 4 | 0 |  |  |  |  |
-| ucbsaaradio |  |  | 11 | 0 |  |  |  |  |
-| miscradio |  |  | 12 | 0 |  |  |  |  |
-| specopsradio |  |  | 99 | 0 |  |  |  |  |
+| ucmiscradio |  |  | 30 | 0 |  |  |  |  |
 | announcer |  |  | 78 | 0 |  |  |  |  |
-| umbrellaradio |  |  | 111 | 0 |  |  |  |  |
-| misc |  |  | 1 | 0 |  |  |  |  |
 | jumpscare |  |  | 215 | 0 |  |  |  |  |
+| misc |  |  | 1 | 0 |  |  |  |  |
+| miscradio |  |  | 12 | 0 |  |  |  |  |
+| umbrellaradio |  |  | 111 | 0 |  |  |  |  |
+| ucbsaaradio |  |  | 11 | 0 |  |  |  |  |
+| gunshot |  |  | 2 | 0 |  |  |  |  |
+| narrator |  |  | 151 | 0 |  |  |  |  |
