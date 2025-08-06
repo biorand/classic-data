@@ -10,24 +10,17 @@ jobs:
         uses: actions/checkout@v4
       - name: Create artifact
         run: |
-          mkdir -p out
           if TAG=$(git describe --exact-match --tags 2>/dev/null); then
             VERSION=$(echo "$TAG" | sed 's/^v//')
           else
             VERSION=$(git describe --tags --always | sed 's/^v//')
           fi
           echo "$VERSION" > VERSION
-          zip -r out/biorand-classic-data.zip data LICENSE VERSION
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: biorand-classic-data
-          compression-level: 0
-          path: out/biorand-classic-data.zip
+          ./create-packs.sh
       - name: Create release
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/v')
         with:
           fail_on_unmatched_files: true
           files: |
-            out/biorand-classic-data.zip
+            datapacks/*.zip

@@ -1,5 +1,5 @@
-@echo off
-rd /s/q datapacks
+#!/bin/bash
+rm -rf datapacks
 python create-pack.py base
 python create-pack.py classic re1 re1.5 re2 re3 recv cv
 python create-pack.py modern re4 re5 re6
