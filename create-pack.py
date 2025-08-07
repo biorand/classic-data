@@ -82,13 +82,18 @@ def collect_misc_content(data_dir):
     title_path = os.path.join(data_dir, 'title')
     if os.path.isdir(title_path):
         misc.add(('title', ''))  # '' means copy whole folder
+    # re2/credits folder (all contents)
+    credits_path = os.path.join(data_dir, 're2', 'credits')
+    if os.path.isdir(credits_path):
+        misc.add((os.path.join('re2', 'credits'), ''))  # '' means copy whole folder
     return misc
 
 def copy_selected(data_dir, pack_dir, selected):
     for subdir, folder in selected:
-        if subdir == 'title' and folder == '':
-            src = os.path.join(data_dir, 'title')
-            dst = os.path.join(pack_dir, 'data', 'title')
+        # Handle whole-folder copies for 'title' and 're2/credits'
+        if (subdir == 'title' or subdir == os.path.join('re2', 'credits')) and folder == '':
+            src = os.path.join(data_dir, subdir)
+            dst = os.path.join(pack_dir, 'data', subdir)
             if os.path.isdir(src):
                 shutil.copytree(src, dst)
         else:
