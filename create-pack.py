@@ -102,7 +102,7 @@ def zip_pack(pack_dir, pack_name):
     # Zip all files/folders found in pack_dir
     files_to_zip = [f for f in os.listdir(pack_dir)]
     if sys.platform == 'win32':
-        seven_zip = shutil.which('7z') or 'C:\Program Files\7-Zip\7z.exe'
+        seven_zip = shutil.which('7z') or 'C:\\Program Files\\7-Zip\\7z.exe'
         subprocess.run([seven_zip, 'a', zip_path] + files_to_zip, cwd=pack_dir, check=True)
     else:
         subprocess.run(['zip', '-r', zip_path] + files_to_zip, cwd=pack_dir, check=True)
