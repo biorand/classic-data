@@ -5,35 +5,40 @@ import shutil
 import subprocess
 from pathlib import Path
 
-def get_character_game(folder_name):
-    base_name = folder_name.split('$')[0]
-    parts = base_name.split('.')
-    if len(parts) == 2:
-        return parts[0], parts[1]
-    return base_name, ''
+import re
 
-def collect_content(data_dir, games):
+def get_character_game(folder_name):
+    m = re.match(r'^([^.\$]+)(?:\$([^.]*)?)?(?:\.(.*))?$', folder_name)
+    if m:
+        base = m.group(1) or ''
+        skin = m.group(2) if m.group(2) is not None else ''
+        game = m.group(3) if m.group(3) is not None else ''
+        return base, skin, game
+    return folder_name, '', ''
+
+
+def collect_selected(data_dir, allowed_games):
     selected = set()
     # Hurt
     hurt_path = os.path.join(data_dir, 'hurt')
     if os.path.isdir(hurt_path):
         for folder in os.listdir(hurt_path):
-            char, game = get_character_game(folder)
-            if game in games:
+            base, skin, game = get_character_game(folder)
+            if (allowed_games and game in allowed_games) or (not allowed_games and not game):
                 selected.add(('hurt', folder))
     # Voice
     voice_path = os.path.join(data_dir, 'voice')
     if os.path.isdir(voice_path):
         for folder in os.listdir(voice_path):
-            char, game = get_character_game(folder)
-            if game in games:
+            base, skin, game = get_character_game(folder)
+            if (allowed_games and game in allowed_games) or (not allowed_games and not game):
                 selected.add(('voice', folder))
     # BGM
     bgm_path = os.path.join(data_dir, 'bgm')
     if os.path.isdir(bgm_path):
         for folder in os.listdir(bgm_path):
             game_name = folder.split('_')[0]
-            if game_name in games:
+            if (allowed_games and game_name in allowed_games) or (not allowed_games and not game_name):
                 selected.add(('bgm', folder))
     # re1, re2, re3, recv
     for game_folder in ['re1', 're2', 're3', 'recv']:
@@ -42,51 +47,27 @@ def collect_content(data_dir, games):
             pld_path = os.path.join(data_dir, game_folder, pld)
             if os.path.isdir(pld_path):
                 for folder in os.listdir(pld_path):
-                    char, game = get_character_game(folder)
-                    if game in games:
+                    base, skin, game = get_character_game(folder)
+                    if (allowed_games and game in allowed_games) or (not allowed_games and not game):
                         selected.add((os.path.join(game_folder, pld), folder))
         # emd
         emd_path = os.path.join(data_dir, game_folder, 'emd')
         if os.path.isdir(emd_path):
             for folder in os.listdir(emd_path):
-                char, game = get_character_game(folder)
-                if game in games:
+                base, skin, game = get_character_game(folder)
+                if (allowed_games and game in allowed_games) or (not allowed_games and not game):
                     selected.add((os.path.join(game_folder, 'emd'), folder))
+    # base only
+    if not allowed_games:
+        # title folder (all contents)
+        title_path = os.path.join(data_dir, 'title')
+        if os.path.isdir(title_path):
+            selected.add(('title', ''))  # '' means copy whole folder
+        # re2/credits folder (all contents)
+        credits_path = os.path.join(data_dir, 're2', 'credits')
+        if os.path.isdir(credits_path):
+            selected.add((os.path.join('re2', 'credits'), ''))  # '' means copy whole folder
     return selected
-
-def collect_misc_content(data_dir):
-    # Everything not in a game
-    misc = set()
-    # Hurt
-    hurt_path = os.path.join(data_dir, 'hurt')
-    if os.path.isdir(hurt_path):
-        for folder in os.listdir(hurt_path):
-            char, game = get_character_game(folder)
-            if not game:
-                misc.add(('hurt', folder))
-    # Voice
-    voice_path = os.path.join(data_dir, 'voice')
-    if os.path.isdir(voice_path):
-        for folder in os.listdir(voice_path):
-            char, game = get_character_game(folder)
-            if not game:
-                misc.add(('voice', folder))
-    # emd (top-level only, not in game folders)
-    emd_path = os.path.join(data_dir, 'emd')
-    if os.path.isdir(emd_path):
-        for folder in os.listdir(emd_path):
-            char, game = get_character_game(folder)
-            if not game:
-                misc.add(('emd', folder))
-    # title folder (all contents)
-    title_path = os.path.join(data_dir, 'title')
-    if os.path.isdir(title_path):
-        misc.add(('title', ''))  # '' means copy whole folder
-    # re2/credits folder (all contents)
-    credits_path = os.path.join(data_dir, 're2', 'credits')
-    if os.path.isdir(credits_path):
-        misc.add((os.path.join('re2', 'credits'), ''))  # '' means copy whole folder
-    return misc
 
 def copy_selected(data_dir, pack_dir, selected):
     for subdir, folder in selected:
@@ -129,10 +110,7 @@ def main():
     if os.path.isdir(pack_dir):
         shutil.rmtree(pack_dir)
     os.makedirs(os.path.join(pack_dir, 'data'), exist_ok=True)
-    if games:
-        selected = collect_content(data_dir, games)
-    else:
-        selected = collect_misc_content(data_dir)
+    selected = collect_selected(data_dir, games)
     copy_selected(data_dir, pack_dir, selected)
     # Copy LICENSE and VERSION to pack_dir (top level)
     for fname in ['LICENSE', 'VERSION']:
