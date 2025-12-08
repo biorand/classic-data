@@ -4,17 +4,36 @@ import json
 import shutil
 import subprocess
 from pathlib import Path
+import argparse
 
 import re
 
 def get_character_game(folder_name):
-    m = re.match(r'^([^.\$]+)(?:\$([^.]*)?)?(?:\.(.*))?$', folder_name)
-    if m:
-        base = m.group(1) or ''
-        skin = m.group(2) if m.group(2) is not None else ''
-        game = m.group(3) if m.group(3) is not None else ''
-        return base, skin, game
-    return folder_name, '', ''
+    """
+    Extracts (base, skin, game) from folder_name.
+    Format: BASE.GAME$SKIN or BASE$SKIN
+    Examples:
+        'ada.re2$common' -> ('ada', 'common', 're2')
+        'chris.re1$battle' -> ('chris', 'battle', 're1')
+        'ada.re2' -> ('ada', '', 're2')
+        'npc$common' -> ('npc', 'common', '')
+        'ada' -> ('ada', '', '')
+    """
+    if '$' in folder_name:
+        base_part, skin = folder_name.split('$', 1)
+        if '.' in base_part:
+            base, game = base_part.split('.', 1)
+        else:
+            base = base_part
+            game = ''
+    else:
+        skin = ''
+        if '.' in folder_name:
+            base, game = folder_name.split('.', 1)
+        else:
+            base = folder_name
+            game = ''
+    return base, skin, game
 
 
 def collect_selected(data_dir, allowed_games):
@@ -96,21 +115,41 @@ def zip_pack(pack_dir, pack_name):
         shutil.rmtree(pack_dir)
 
 def main():
-    if len(sys.argv) < 2:
-        print('Usage: create-pack.py <pack_name> [game1 game2 ...]')
-        sys.exit(1)
-    pack_name = sys.argv[1]
-    games = sys.argv[2:]
+    parser = argparse.ArgumentParser(description='Create data packs from game assets.')
+    parser.add_argument('pack_name', help='Name of the data pack')
+    parser.add_argument('games', nargs='*', help='Games to include (if none, misc content only)')
+    parser.add_argument('--dry-run', action='store_true', help='Show what would be done without making changes')
+    args = parser.parse_args()
+
+    pack_name = args.pack_name
+    games = args.games
+    dry_run = args.dry_run
+
     data_dir = 'data'
     pack_dir = os.path.join('datapacks', pack_name)
     zip_path = os.path.abspath(os.path.join('datapacks', f'{pack_name}.zip'))
+
+    selected = collect_selected(data_dir, games)
+
+    if dry_run:
+        print(f"Dry run: Would create pack '{pack_name}' with games: {games or 'misc'}")
+        print("Selected items:")
+        for subdir, folder in sorted(selected):
+            if folder == '':
+                print(f"  Whole folder: {subdir}")
+            else:
+                print(f"  {subdir}/{folder}")
+        print(f"Would copy LICENSE and VERSION to {pack_dir}")
+        print(f"Would zip to {zip_path}")
+        return
+
     # Delete zip file and pack_dir if they already exist
     if os.path.isfile(zip_path):
         os.remove(zip_path)
     if os.path.isdir(pack_dir):
         shutil.rmtree(pack_dir)
     os.makedirs(os.path.join(pack_dir, 'data'), exist_ok=True)
-    selected = collect_selected(data_dir, games)
+
     copy_selected(data_dir, pack_dir, selected)
     # Copy LICENSE and VERSION to pack_dir (top level)
     for fname in ['LICENSE', 'VERSION']:

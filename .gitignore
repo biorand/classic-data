@@ -1,5 +1,7 @@
 datapacks
 
+__pycache__
+
 # Standard OS files to ignore
 # Windows
 Thumbs.db
